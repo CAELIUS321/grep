@@ -1,10 +1,10 @@
-use std::{error::Error, fs,env};
+use std::{env, error::Error, fs};
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.file_name)?;
-    let results=if config.case_sensitive{
+    let results = if config.case_sensitive {
         search(&config.query, &contents)
-    }else{
+    } else {
         search_case_insensitive(&config.query, &contents)
     };
     for line in results {
@@ -25,8 +25,12 @@ impl Config {
         }
         let query = args[1].clone();
         let file_name = args[2].clone();
-        let case_sensitive=env::var("CASE_INSENSITIVE").is_err();
-        Ok(Config { query, file_name, case_sensitive})
+        let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
+        Ok(Config {
+            query,
+            file_name,
+            case_sensitive,
+        })
     }
 }
 
@@ -41,7 +45,7 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let query=query.to_lowercase();
+    let query = query.to_lowercase();
 
     let mut results = Vec::new();
     for line in contents.lines() {
@@ -71,7 +75,7 @@ Duct tape.";
         let query = "rUsT";
         let contents = "\
 Rust:
-safe, fase, productive.
+safe, fast, productive.
 Pick three.
 Trust me.";
         assert_eq!(
